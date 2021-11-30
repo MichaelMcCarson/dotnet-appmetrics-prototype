@@ -1,0 +1,56 @@
+version: '3.4'
+
+services:
+  dotnetappmetricsprototype:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:10001;http://+:10000
+      - ASPNETCORE_HTTPS_PORT=10001
+    ports:
+      - "10001:10001"
+      - "10000:10000"
+    networks:
+      - appmetrics
+    volumes:
+      - ~/.aspnet/https:/root/.aspnet/https:ro
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+
+  grafana:
+    ports:
+      - 3000:3000
+    networks:
+      - appmetrics
+    volumes:
+      - grafana:/var/lib/grafana
+
+  influxdb:
+    ports:
+      - '8086:8086'
+    networks:
+      - appmetrics
+    volumes:
+      - influxdb:/var/lib/influxdb
+
+  prometheus:
+    ports:
+      - '9090:9090'
+    networks:
+      - appmetrics
+    volumes:
+      - prometheus:/prometheus
+      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+
+
+networks:
+  appmetrics:
+    name: appmetrics-network
+    external: true
+
+volumes:
+  grafana:
+    driver: local
+  influxdb:
+    driver: local
+  prometheus:
+    driver: local

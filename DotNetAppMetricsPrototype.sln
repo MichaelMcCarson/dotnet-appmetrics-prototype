@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetAppMetricsPrototype", "DotnetAppMetricsPrototype\DotnetAppMetricsPrototype.csproj", "{00113395-81EF-4AD4-A28F-DB85A5883071}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BEAF02D6-66CA-4580-8B8C-F387C6B3EFB5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{725B5164-10CF-4214-9F92-6DBA4108DD75}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{00113395-81EF-4AD4-A28F-DB85A5883071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00113395-81EF-4AD4-A28F-DB85A5883071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00113395-81EF-4AD4-A28F-DB85A5883071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00113395-81EF-4AD4-A28F-DB85A5883071}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEAF02D6-66CA-4580-8B8C-F387C6B3EFB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEAF02D6-66CA-4580-8B8C-F387C6B3EFB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEAF02D6-66CA-4580-8B8C-F387C6B3EFB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEAF02D6-66CA-4580-8B8C-F387C6B3EFB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
