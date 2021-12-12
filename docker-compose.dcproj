@@ -17,4 +17,7 @@
     <None Include="prometheus\alert.yml" />
     <None Include="prometheus\prometheus.yml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="prometheus\**" />
+  </ItemGroup>
 </Project>

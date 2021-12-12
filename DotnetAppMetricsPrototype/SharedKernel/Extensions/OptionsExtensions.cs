@@ -1,5 +1,4 @@
 ﻿using DotnetAppMetricsPrototype.SharedKernel.Abstractions;
-using Microsoft.Extensions.Configuration;
 
 namespace DotnetAppMetricsPrototype.SharedKernel.Extensions
 {

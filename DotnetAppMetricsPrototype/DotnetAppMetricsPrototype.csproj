@@ -22,6 +22,7 @@
     <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Extensions.Configuration" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Extensions.DependencyInjection" Version="4.3.0" />
+    <PackageReference Include="App.Metrics.Extensions.HealthChecks" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Formatters.InfluxDB" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Formatters.Json" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="4.3.0" />
@@ -29,8 +30,10 @@
     <PackageReference Include="App.Metrics.Reporting.Console" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Reporting.Http" Version="4.3.0" />
     <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="4.3.0" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
   </ItemGroup>
@@ -45,19 +48,15 @@
     <None Remove="Infrastructure\" />
     <None Remove="SharedKernel\Abstractions\" />
     <None Remove="Application\AppMetrics\" />
-    <None Remove="Application\AppMetrics\Metrics\" />
-    <None Remove="Application\AppMetrics\Schemas\" />
-    <None Remove="Application\AppMetrics\Services\" />
+    <None Remove="Application\PerformanceMonitoring\Metrics\" />
+    <None Remove="Application\PerformanceMonitoring\Schemas\" />
+    <None Remove="Application\PerformanceMonitoring\Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Application\" />
-    <Folder Include="Infrastructure\" />
     <Folder Include="Presentation" />
     <Folder Include="SharedKernel" />
-    <Folder Include="SharedKernel\Abstractions\" />
-    <Folder Include="Application\AppMetrics\" />
-    <Folder Include="Application\AppMetrics\Metrics\" />
-    <Folder Include="Application\AppMetrics\Schemas\" />
-    <Folder Include="Application\AppMetrics\Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 </Project>

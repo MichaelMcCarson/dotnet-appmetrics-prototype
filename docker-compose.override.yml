@@ -6,51 +6,122 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:10001;http://+:10000
       - ASPNETCORE_HTTPS_PORT=10001
+      - DB_CONNECTION_STRING=host=postgres;port=5432;database=AppMetrics;username=${POSTGRES_USERNAME};password=${POSTGRES_PASSWORD}
+      - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+      - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
     ports:
       - "10001:10001"
       - "10000:10000"
     networks:
-      - appmetrics
+      - appmetrics-network
     volumes:
       - ~/.aspnet/https:/root/.aspnet/https:ro
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
-  grafana:
+  postgres:
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=AppMetrics
     ports:
-      - 3000:3000
+      - "5432:5432"
     networks:
-      - appmetrics
+      - appmetrics-network
     volumes:
-      - grafana:/var/lib/grafana
+      - postgres-storage:/var/lib/postgresql/data
+      - ./db-scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    restart:
+      always
+
+  grafana:
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+    links:
+      - influxdb
+    networks:
+      - appmetrics-network
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart:
+      always
 
   influxdb:
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=appmetrics
+      - DOCKER_INFLUXDB_INIT_BUCKET=appmetrics-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
     ports:
-      - '8086:8086'
+      - "8086:8086"
     networks:
-      - appmetrics
+      - appmetrics-network
     volumes:
-      - influxdb:/var/lib/influxdb
+      - influxdb-storage:/var/lib/influxdb2
+      - influxdb-storage:/etc/influxdb2
+    restart:
+      always
+
+  telegraf:
+    environment:
+      - DOCKER_INFLUXDB_INIT_ORG=appmetrics
+      - DOCKER_INFLUXDB_INIT_BUCKET=appmetrics-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+    ports:
+    - '8125:8125'
+    networks:
+      - appmetrics-network
+    depends_on:
+      - influxdb
+    links:
+      - influxdb
+    volumes:
+    - ./infrastructure-provisioning/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    restart:
+      always
+
+  chronograf:
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+      - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+    ports:
+      - "8888:8888"
+    depends_on:
+      - influxdb
+    networks:
+      - appmetrics-network
+    volumes:
+      - chronograf-storage:/var/lib/chronograf
+    restart:
+      always
 
   prometheus:
     ports:
-      - '9090:9090'
+      - "9090:9090"
     networks:
-      - appmetrics
+      - appmetrics-network
     volumes:
-      - prometheus:/prometheus
-      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-storage:/prometheus
+      - ./infrastructure-provisioning/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    restart:
+      always
 
 
 networks:
-  appmetrics:
-    name: appmetrics-network
-    external: true
+  appmetrics-network: {}
+
 
 volumes:
-  grafana:
-    driver: local
-  influxdb:
-    driver: local
-  prometheus:
-    driver: local
+  chronograf-storage:
+  grafana-storage:
+  influxdb-storage:
+  prometheus-storage:
+  postgres-storage:

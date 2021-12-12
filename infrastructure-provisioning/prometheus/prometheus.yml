@@ -24,6 +24,6 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: 
-          - 'appmetrics:10001'
+          - 'dotnetappmetricsprototype:10000'
 
           

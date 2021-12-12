@@ -3,20 +3,39 @@ version: '3.4'
 services:
   dotnetappmetricsprototype:
     image: ${DOCKER_REGISTRY-}dotnetappmetricsprototype
+    container_name: dotnetappmetricsprototype
     build:
       context: .
       dockerfile: DotnetAppMetricsPrototype/Dockerfile
 
+  postgres:
+    image: postgres:latest
+    container_name: dotnetappmetricsprototype-db
+
   grafana:
     image: grafana/grafana
     container_name: grafana
+    depends_on:
+      - influxdb
 
   influxdb:
-    image: influxdb
+    image: influxdb:2.1.1
     container_name: influxdb
+    depends_on:
+      - dotnetappmetricsprototype
+
+  telegraf:
+    image: telegraf
+    container_name: telegraf
+
+  chronograf:
+    image: chronograf:1.9.1
+    container_name: chronograf
+    depends_on:
+      - influxdb
 
   prometheus:
     image: prom/prometheus
     container_name: prometheus
-
-
+    depends_on:
+      - dotnetappmetricsprototype

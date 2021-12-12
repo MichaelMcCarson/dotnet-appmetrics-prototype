@@ -1,6 +1,5 @@
-﻿using DotnetAppMetricsPrototype.Application.Abstractions;
-using DotnetAppMetricsPrototype.Application.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using DotnetAppMetricsPrototype.Application.PerformanceMonitoring.Abstractions;
+using DotnetAppMetricsPrototype.Application.PerformanceMonitoring.Services;
 
 namespace DotnetAppMetricsPrototype.Application
 {
@@ -8,7 +7,7 @@ namespace DotnetAppMetricsPrototype.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IAppMetrics, AppMetrics>();
+            services.AddSingleton<IAppMonitoring, AppMonitoringFacade>();
 
             return services;
         }

@@ -1,29 +1,26 @@
-﻿using System;
-using System.Linq;
-using App.Metrics;
+﻿using App.Metrics;
 using App.Metrics.AspNetCore;
 using App.Metrics.AspNetCore.Endpoints;
 using App.Metrics.AspNetCore.Health;
 using App.Metrics.Formatters.Prometheus;
 using DotnetAppMetricsPrototype.SharedKernel.Extensions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using MetricsOptions = DotnetAppMetricsPrototype.Application.AppSettings.MetricsOptions;
+using MetricsOptions = DotnetAppMetricsPrototype.Application.Settings.MetricsOptions;
 
 namespace DotnetAppMetricsPrototype.Infrastructure.Configuration.StartupExtensions
 {
     public static class AppMetricsExtensions
     {
-        private const string AppTag = "app";
-        private const string EnvTag = "env";
-        private const string ServerTag = "server";
+        private const string AppTag = "App";
+        private const string EnvTag = "Env";
+        private const string ServerTag = "Server";
         private const string ProtobufPrometheusFormatter = "protobuf";
-        
+
         private static bool _initialized;
 
         public static IWebHostBuilder UseAppMetrics(this IWebHostBuilder webHostBuilder, IConfiguration configuration)
         {
             var metricsOptions = configuration.GetOptions<MetricsOptions>(MetricsOptions.Name);
+            metricsOptions.CacheCredentials(configuration);
 
             if (_initialized || !metricsOptions.Enabled)
             {
@@ -64,19 +61,21 @@ namespace DotnetAppMetricsPrototype.Infrastructure.Configuration.StartupExtensio
                 tags.TryGetValue(AppTag, out var app);
                 tags.TryGetValue(EnvTag, out var env);
                 tags.TryGetValue(ServerTag, out var server);
-                
+
                 cfg.AddAppTag(!string.IsNullOrWhiteSpace(app) ? app : default);
                 cfg.AddEnvTag(!string.IsNullOrWhiteSpace(env) ? env : default);
                 cfg.AddServerTag(!string.IsNullOrWhiteSpace(server) ? server : default);
-                
+
+
                 foreach (var (key, value) in tags)
                 {
-                    if (cfg.GlobalTags.ContainsKey(key))
+                    var tagKey = key.ToLowerInvariant();
+                    if (cfg.GlobalTags.ContainsKey(tagKey))
                     {
                         continue;
                     }
-                    
-                    cfg.GlobalTags.Add(key, value);
+
+                    cfg.GlobalTags.Add(tagKey, value);
                 }
             });
 
@@ -87,11 +86,14 @@ namespace DotnetAppMetricsPrototype.Infrastructure.Configuration.StartupExtensio
                 return builder;
             }
 
+            var (username, password) = metricsOptions.GetCredentials();
             builder.Report.ToInfluxDb(o =>
                 {
                     o.InfluxDb.Database = metricsOptions.Database;
                     o.InfluxDb.BaseUri = new Uri(metricsOptions.InfluxUrl);
                     o.InfluxDb.CreateDataBaseIfNotExists = metricsOptions.CreateDataBaseIfNotExists;
+                    o.InfluxDb.UserName = username;
+                    o.InfluxDb.Password = password;
                     o.FlushInterval = TimeSpan.FromSeconds(metricsOptions.Interval);
                 });
 

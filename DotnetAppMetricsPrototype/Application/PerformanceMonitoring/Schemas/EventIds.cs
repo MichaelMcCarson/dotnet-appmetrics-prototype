@@ -1,7 +1,6 @@
-﻿using System;
-namespace DotnetAppMetricsPrototype.Application.AppMetrics.Schemas
+﻿namespace DotnetAppMetricsPrototype.Application.PerformanceMonitoring.Schemas
 {
-    public enum EventIds
+    internal enum EventIds
     {
         GCHeapStatsV1 = 4,
         ThreadPoolWorkerThreadAdjustmentAdjustment = 55,
